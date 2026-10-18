@@ -92,6 +92,13 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
 
+    - name: Setup MIUI stock kernel config
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        cp $GITHUB_WORKSPACE/stock_cepheus_config.txt arch/arm64/configs/cepheus_miui_defconfig
+        sed -i 's/^SUBLEVEL = 117/SUBLEVEL = 180/' Makefile
+        sed -i 's/^CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION="-perf-g4b73fd3"/' arch/arm64/configs/cepheus_miui_defconfig
+        sed -i 's/^CONFIG_LOCALVERSION_AUTO=.*/# CONFIG_LOCALVERSION_AUTO is not set/' arch/arm64/configs/cepheus_miui_defconfig
     - name: Download source boot image
       if: env.BUILD_BOOT_IMG == 'true'
       run: |
